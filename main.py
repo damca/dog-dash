@@ -76,7 +76,7 @@ app.layout = html.Div(
         html.Div(
             [
                 html.P(id='placeholder'),
-                dcc.Interval(id='interval-component', interval=5000, n_intervals=0),
+                dcc.Interval(id='interval-component', interval=30000, n_intervals=0),
                 html.Div(
                     [html.H5("Last Pee"), html.H6(id='peetime')],
                     id="pee",
