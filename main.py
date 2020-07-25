@@ -1,4 +1,5 @@
 import plotly.express as px
+import os
 import pandas as pd
 from datetime import datetime, timedelta
 import dash
@@ -10,20 +11,13 @@ import flask
 app = dash.Dash(__name__)
 server = app.server
 
-import webbrowser
-chrome_path = "/mnt/c/Program Files (x86)/Google/Chrome/Application/chrome.exe"
-webbrowser.register('chrome', webbrowser.Chrome(chrome_path), instance=webbrowser.Chrome(chrome_path),
-preferred=True)
-
-
 # serve image
 # https://github.com/plotly/dash/issues/71
 image_dir = './ims/'
-static_image_route = '/static/'
-@app.server.route('{}<image_path>'.format(static_image_route))
-def serve_image(image_path):
-    image_name = 'download.jpg'
-    return flask.send_from_directory(image_dir, image_name)
+static_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
+@app.server.route('/static/<resource>')
+def serve_image(resource):
+    return flask.send_from_directory(static_path, resource)
 
 # Create app layout
 app.layout = html.Div(
@@ -36,7 +30,7 @@ app.layout = html.Div(
                 html.Div(
                     [
                         html.Img(
-                            src=app.get_asset_url("dog.jpg"),
+                            src='/static/dog.jpg',
                             id="dog-image",
                             style={
                                 "height": "100px",
@@ -82,7 +76,7 @@ app.layout = html.Div(
         html.Div(
             [
                 html.P(id='placeholder'),
-                html.Button("Update", id="update-button", className='mini_container'),
+                dcc.Interval(id='interval-component', interval=5000, n_intervals=0),
                 html.Div(
                     [html.H5("Last Pee"), html.H6(id='peetime')],
                     id="pee",
@@ -152,7 +146,7 @@ load_df()
 # make a placeholder that reloads df, then trigger other callbacks.
 @app.callback(
         Output('placeholder', 'children'),
-        [Input('update-button', 'n_clicks')],
+        [Input('interval-component', 'n_intervals')],
 )
 def reload(click):
     load_df()
@@ -160,14 +154,14 @@ def reload(click):
 
 @app.callback(
     Output("peetime", "children"),
-    [Input("placeholder", "children")],
+    [Input("interval-component", "n_intervals")],
 )
 def update_peetime(click):
     return [lastpeet, html.Br(), lastpeed]
 
 @app.callback(
     Output("pootime", "children"),
-    [Input("placeholder", "children")],
+    [Input("interval-component", "n_intervals")],
 )
 def update_pootime(click):
     return [lastpoot, html.Br(), lastpood]
