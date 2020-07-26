@@ -12,7 +12,7 @@ from sqlite3 import Error
 db_path = 'db/scat.sqlite'
 def create_connection(db_path):
     conn = None
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_path, check_same_thread=False)
     print(sqlite3.version)
     return conn
 
