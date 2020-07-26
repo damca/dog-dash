@@ -1,0 +1,5 @@
+# exclude the following
+db/*
+*.jpg
+*.png
+*.sqlite
