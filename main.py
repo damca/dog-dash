@@ -19,6 +19,11 @@ static_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static')
 def serve_image(resource):
     return flask.send_from_directory(static_path, resource)
 
+import multiprocessing
+from listen_keys import conn, start
+p1 = multiprocessing.Process(target=start)
+p1.start()
+
 # Create app layout
 app.layout = html.Div(
     [
@@ -127,7 +132,7 @@ fmt = '%I:%M %p\n%m-%d-%Y'
 
 def load_df():
     global df, firsttime, lasttime, lastpeet, lastpeed, lastpoot, lastpood
-    df = pd.read_csv('data/dog.csv')
+    df = pd.read_sql_query("SELECT * from scat", conn)
     df['y'] = 1
     df['size'] = 10
     df['key'] = df['key'].astype(str)  # make categorical

@@ -4,3 +4,4 @@ db/*
 *.png
 *.sqlite
 *.pyc
+*.csv
